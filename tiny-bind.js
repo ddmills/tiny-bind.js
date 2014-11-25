@@ -1,4 +1,4 @@
-(function() {
+(function(root) {
   function tl(binding, node) {
     this.binding = binding;
     this.node = node;
@@ -9,11 +9,12 @@
   }
 
   tl.prototype.notify = function(val) {
-    if (this.node.nodeName == 'INPUT') {
+    if (this.node.nodeName == 'INPUT' || this.node.nodeName == 'TEXTAREA') {
       this.node.value = val;
+    // } else if () {
+      // this.node.value = val;
     } else {
       this.node.innerHTML = val;
-      this.node.innerText = val;
     }
   }
 
@@ -43,13 +44,15 @@
   }
 
   var binds = {};
-  var elements = [].slice.call(document.querySelectorAll('[tiny-text]'));
+  var elements = [].slice.call(document.querySelectorAll('[tiny-bind]'));
   elements.forEach(function(i) {
-    var name = i.getAttribute('tiny-text');
+    var name = i.getAttribute('tiny-bind');
     if (!(name in binds)) {
       binds[name] = new tb(name);
     }
     binds[name].attach(i);
   });
-  console.log(binds);
-})();
+  root.tiny = {
+    'bindings' : binds,
+  }
+})(this);

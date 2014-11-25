@@ -7,15 +7,19 @@
   <title> Tiny-Bind Data Binding Test </title>
 </head>
 <body>
-  <p tiny-text='hello'></p>
-  <input type='text' tiny-text='hello'><br/>
-  <textarea tiny-text='hello'></textarea>
+  <p tiny-bind='hello'></p>
+  <input type='text' tiny-bind='hello'><br/>
+  <textarea tiny-bind='hello'></textarea>
 
-  <p tiny-text='abe'></p>
-  <p tiny-text='abe'></p>
-  <input type='text' tiny-text='abe'>
-  <input type='text' tiny-text='abe'>
+  <p tiny-bind='abe'></p>
+  <p tiny-bind='abe'></p>
+  <input type='text' tiny-bind='abe'>
+  <input type='text' tiny-bind='abe'>
 
   <script src='../tiny-bind.js'></script>
+  <script>
+  console.log(tiny.bindings);
+    // age = tiny.bind('stuff');
+  </script>
 </body>
 </html>
