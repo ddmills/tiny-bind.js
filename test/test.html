@@ -8,18 +8,32 @@
 </head>
 <body>
   <p tiny-bind='hello'></p>
-  <input type='text' tiny-bind='hello'><br/>
+  <input id='help' type='text' tiny-bind='hello'><br/>
   <textarea tiny-bind='hello'></textarea>
 
   <p tiny-bind='abe'></p>
   <p tiny-bind='abe'></p>
-  <input type='text' tiny-bind='abe'>
-  <input type='text' tiny-bind='abe'>
+
+  <input type='text' tiny-bind='abe'><br />
+
+
+  <input type='text' tiny-bind='later'>
+  <div id='bind-later'>
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+    <p></p>
+  </div>
 
   <script src='../tiny-bind.js'></script>
   <script>
-  console.log(tiny.bindings);
-    // age = tiny.bind('stuff');
+    console.log(tiny);
+    tiny.bindings.abe.subscribe(function(val) {
+      tiny.bindings.hello.set(val);
+    });
+    tiny.bind('#bind-later p', 'later');
   </script>
 </body>
 </html>

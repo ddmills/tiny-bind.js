@@ -1,5 +1,5 @@
 (function(root) {
-  function tl(binding, node) {
+  function tc(binding, node) {
     this.binding = binding;
     this.node = node;
     var s = this;
@@ -8,11 +8,9 @@
     });
   }
 
-  tl.prototype.notify = function(val) {
+  tc.prototype.notify = function(val) {
     if (this.node.nodeName == 'INPUT' || this.node.nodeName == 'TEXTAREA') {
       this.node.value = val;
-    // } else if () {
-      // this.node.value = val;
     } else {
       this.node.innerHTML = val;
     }
@@ -20,7 +18,8 @@
 
   function tb(name) {
     this.name = name;
-    this.listeners = [];
+    this.contributors = [];
+    this.subscribers = [];
   }
 
   tb.prototype.set = function(val) {
@@ -33,26 +32,43 @@
   }
 
   tb.prototype.notify = function(val) {
-    this.listeners.forEach(function(listener) {
-      listener.notify(val);
+    this.contributors.forEach(function(contributor) {
+      contributor.notify(val);
+    });
+    this.subscribers.forEach(function(callback) {
+      callback(val);
     });
   }
 
-  tb.prototype.attach = function(n) {
-    var listener = new tl(this, n);
-    this.listeners.push(listener);
+  tb.prototype.subscribe = function(cb) {
+    this.subscribers.push(cb);
   }
 
-  var binds = {};
-  var elements = [].slice.call(document.querySelectorAll('[tiny-bind]'));
-  elements.forEach(function(i) {
-    var name = i.getAttribute('tiny-bind');
-    if (!(name in binds)) {
-      binds[name] = new tb(name);
-    }
-    binds[name].attach(i);
-  });
-  root.tiny = {
-    'bindings' : binds,
+  tb.prototype.a = function(n) {
+    var c = new tc(this, n);
+    this.contributors.push(c);
   }
+
+  root.tiny = {
+    'bindings' : {},
+    'bind'     : function(selector, name, value) {
+      var elements = [].slice.call(document.querySelectorAll(selector));
+      var t = this;
+      elements.forEach(function(e) {
+        if (!(name in t.bindings)) {
+          t.bindings[name] = new tb(name);
+        }
+        t.bindings[name].a(e);
+      });
+    }
+  }
+  var e = [].slice.call(document.querySelectorAll('[tiny-bind]'));
+  e.forEach(function(i) {
+    var n = i.getAttribute('tiny-bind');
+    if (!(n in tiny.bindings)) {
+      tiny.bindings[n] = new tb(n);
+    }
+    tiny.bindings[n].a(i);
+  });
+
 })(this);
