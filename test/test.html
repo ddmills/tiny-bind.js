@@ -27,12 +27,13 @@
     <p></p>
   </div>
 
-  <script src='../tiny-bind.js'></script>
+  <script src='../tiny-bind.min.js'></script>
   <script>
-    console.log(tiny);
+
     tiny.bindings.abe.subscribe(function(val) {
       tiny.bindings.hello.set(val);
     });
+
     /* bind all paragraph elements inside #paraGroup
      * to a binding called "paras" */
     var paras = tiny.bind('#paraGroup p', 'paras');

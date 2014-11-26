@@ -2,9 +2,9 @@
   function tc(binding, node) {
     this.binding = binding;
     this.node = node;
-    var s = this;
+    var self = this;
     this.node.addEventListener('input', function() {
-      s.binding.set(s.node.value);
+      self.binding.set(self.node.value);
     });
   }
 
@@ -44,32 +44,33 @@
     this.subscribers.push(cb);
   }
 
-  tb.prototype.a = function(n) {
-    var c = new tc(this, n);
-    this.contributors.push(c);
+  tb.prototype.attach = function(element) {
+    this.contributors.push(new tc(this, element));
+  }
+
+  function _fetch(selector) {
+    return [].slice.call(document.querySelectorAll(selector));
   }
 
   root.tiny = {
     'bindings' : {},
     'bind'     : function(selector, name, value) {
-      var elements = [].slice.call(document.querySelectorAll(selector));
-      var t = this;
-      elements.forEach(function(e) {
-        if (!(name in t.bindings)) {
-          t.bindings[name] = new tb(name);
+      var self = this;
+      _fetch(selector).forEach(function(e) {
+        if (!(name in self.bindings)) {
+          self.bindings[name] = new tb(name);
         }
-        t.bindings[name].a(e);
+        self.bindings[name].attach(e);
       });
-      return t.bindings[name];
+      return self.bindings[name];
     }
   }
-  var e = [].slice.call(document.querySelectorAll('[tiny-bind]'));
-  e.forEach(function(i) {
-    var n = i.getAttribute('tiny-bind');
-    if (!(n in tiny.bindings)) {
-      tiny.bindings[n] = new tb(n);
+  _fetch('[tiny-bind]').forEach(function(element) {
+    var name = element.getAttribute('tiny-bind');
+    if (!(name in tiny.bindings)) {
+      tiny.bindings[name] = new tb(name);
     }
-    tiny.bindings[n].a(i);
+    tiny.bindings[name].attach(element);
   });
 
 })(this);
