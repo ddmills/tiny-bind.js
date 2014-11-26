@@ -3,7 +3,7 @@ tiny-bind.js
 Two-way data binding for javascript.
 
 ### Simple Example
-Create two variables called "firstName" and "lastName" and bind them to the input and span elements.
+Create two bindings called "firstName" and "lastName" and bind them to the input and span elements.
 ```html
 <!-- bind the inner HTML of the span elements -->
 <p><span tiny-html='firstName'></span> <span tiny-html='lastName'></span></p>
@@ -59,7 +59,15 @@ tiny.bind('#spanGroup span', 'devilsNumber', 6);
  * binding called "devilsNumber" as well */
 tiny.bind('#spanInput', 'devilsNumber');
 ```
-
+### Change the Prefix
+The default prefix is "tiny-", this can be changed.
+```html
+<p DOGhtml='location'></p>
+```
+The prefix is sent on the init method:
+```js
+tiny.init('DOG');
+```
 ### Fire Change Event Manually
 ```js
 /* this will notify all subscribers and contributors */
