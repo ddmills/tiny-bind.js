@@ -5,15 +5,19 @@
   <meta name='description' content='data binding test for tiny-bind.js' http-equiv='X-UA-Compatible'>
   <meta content='width=device-width, initial-scale=1' name='viewport'>
   <title> Tiny-Bind Data Binding Test </title>
-  <script src='../tiny-bind.min.js'></script>
+  <script src='../tiny-bind.js'></script>
 </head>
 <body>
+  <input type='text' tiny-value='firstName' value='John'>
+  <input type='text' tiny-value='lastName' value='Smith'>
   <p>
-    <span tiny-bind='firstName'></span>
-    <span tiny-bind='lastName'></span>
+    <span tiny-html='firstName'></span>
+    <span tiny-html='lastName'></span>
   </p>
-  <input type='text' tiny-bind='firstName' value='John'>
-  <input type='text' tiny-bind='lastName' value='Smith'>
+
+  <input type='checkbox' tiny-checked='freedom'>
+  <input type='checkbox' tiny-checked='freedom'>
+  <button type='button' tiny-show='freedom'>hello?</button>
 
   <div id='spanGroup'>
     <span></span>
@@ -21,7 +25,6 @@
     <span></span>
   </div>
   <input id='spanInput' type='text'>
-
   <script>
     /* initialize tiny */
     tiny.init();
@@ -33,20 +36,26 @@
     tiny.bindings.lastName.set('Depski');
     /* subscribe to the lastName binding */
     tiny.bindings.lastName.subscribe(function(newValue) {
-      console.log('The last name was changed to: ' + newValue);
+      if (newValue.length > 5) {
+        tiny.bindings.freedom.set(true);
+      } else {
+        tiny.bindings.freedom.set(false);
+      }
     });
 
     /* create a binding called "devilsNumber"
      * apply it to all three span elements
      * give it a starting value of 666 (optional)! */
-    tiny.bind('#spanGroup span', 'devilsNumber', 666);
+    tiny.html('#spanGroup span', 'devilsNumber', 6);
 
     /* We can also bind the text input to the
      * binding called "devilsNumber" as well */
-    tiny.bind('#spanInput', 'devilsNumber');
+    tiny.value('#spanInput', 'devilsNumber');
+
+
 
     /* this will notify all subscribers and contributors */
-    tiny.bindings.devilsNumber.trigger();
+    // tiny.bindings.devilsNumber.trigger();
   </script>
 </body>
 </html>

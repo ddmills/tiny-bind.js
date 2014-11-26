@@ -1,32 +1,76 @@
 (function(root) {
-  function tc(binding, node) {
-    this.binding = binding;
-    this.node = node;
-    var self = this;
-    this.node.addEventListener('input', function() {
-      self.binding.set(self.node.value);
-    });
-    this.notify(binding.get());
-  }
-
-  tc.prototype.notify = function(val) {
-    if (this.node.nodeName == 'INPUT' || this.node.nodeName == 'TEXTAREA') {
-      this.node.value = val;
-    } else {
+  var handlers = {
+    'html': function(val) {
       this.node.innerHTML = val;
+    },
+    'value': function(val) {
+      this.node.value = val;
+    },
+    'show': function(val) {
+      this.node.style.display = val ? 'block' : 'none';
+    },
+    'checked': function(val) {
+      this.node.checked = val;
     }
   }
 
+  var getVal = {
+    'html': function() {
+      return this.innerHTML;
+    },
+    'value': function() {
+      return this.node.value;
+    },
+    'show': function() {
+      return this.node.display == 'block';
+    },
+    'checked': function() {
+      return this.node.checked;
+    }
+  }
+
+  var listeners = {
+    'html': function(tc) {
+
+    },
+    'value': function(tc) {
+      tc.node.addEventListener('input', function() {
+        tc.binding.set(tc.getVal());
+      });
+    },
+    'show': function(tc) {
+    },
+    'checked': function(tc) {
+      tc.node.addEventListener('click', function() {
+        tc.binding.set(tc.getVal());
+      });
+    }
+  }
+
+  var contribTypes = ['html', 'value', 'show', 'checked'];
+
+  function tc(binding, type, node) {
+    this.binding = binding;
+    this.node = node;
+    this.type = type;
+    this.getVal = getVal[type];
+    this.handle = handlers[type];
+    listeners[type](this);
+    this.handle(binding.get());
+  }
+
   function tb(name) {
-    this.val = '';
-    this.name = name;
+    this.val          = '';
+    this.name         = name;
     this.contributors = [];
-    this.subscribers = [];
+    this.subscribers  = [];
   }
 
   tb.prototype.set = function(val) {
-    this.val = val;
-    this.notify(this.val);
+    if (val != this.val) {
+      this.val = val;
+      this.notify(this.val);
+    }
   }
 
   tb.prototype.get = function() {
@@ -39,7 +83,7 @@
 
   tb.prototype.notify = function(val) {
     this.contributors.forEach(function(contributor) {
-      contributor.notify(val);
+      contributor.handle(val);
     });
     this.subscribers.forEach(function(callback) {
       callback(val);
@@ -47,11 +91,14 @@
   }
 
   tb.prototype.subscribe = function(cb) {
+    cb(this.val);
     this.subscribers.push(cb);
   }
 
-  tb.prototype.attach = function(element) {
-    this.contributors.push(new tc(this, element));
+  tb.prototype.attach = function(type, element) {
+    var cont = new tc(this, type, element);
+    this.contributors.push(cont);
+    return cont;
   }
 
   function _fetch(selector) {
@@ -60,27 +107,40 @@
 
   root.tiny = {
     'bindings' : {},
-    'bind'     : function(selector, name, value) {
+    'bind'     : function(type, selector, name, value) {
       var self = this;
       _fetch(selector).forEach(function(e) {
         if (!(name in self.bindings)) {
           self.bindings[name] = new tb(name);
         }
-        self.bindings[name].attach(e);
+        self.bindings[name].attach(type, e);
+        if (value) { self.bindings[name].set(value); }
       });
-      if (value) { self.bindings[name].set(value); }
       return self.bindings[name];
     },
-    'init'    : function() {
-      _fetch('[tiny-bind]').forEach(function(element) {
-        var name = element.getAttribute('tiny-bind');
-        if (!(name in tiny.bindings)) {
-          tiny.bindings[name] = new tb(name);
-        }
-        if (element.value) {
-          tiny.bindings[name].set(element.value);
-        }
-        tiny.bindings[name].attach(element);
+    'show'    : function(selector, name, value) {
+      this.bind('show', selector, name, value);
+    },
+    'html'    : function(selector, name, value) {
+      this.bind('html', selector, name, value);
+    },
+    'value'   : function(selector, name, value) {
+      this.bind('value', selector, name, value);
+    },
+    'checked' : function(selector, name, value) {
+      this.bind('checked', selector, name, value);
+    },
+    'init'    : function(prefix) {
+      prefix = prefix ? prefix : 'tiny-';
+      contribTypes.forEach(function(type) {
+        var attr = '[' + prefix + type + ']';
+        _fetch(attr).forEach(function(element) {
+          var name = element.getAttribute(prefix+type);
+          if (!(name in tiny.bindings)) {
+            tiny.bindings[name] = new tb(name);
+          }
+          tiny.bindings[name].attach(type, element);
+        });
       });
     }
   }
