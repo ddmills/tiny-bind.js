@@ -32,6 +32,17 @@ There are a few basic bindings types:
 
 *These are not two-way bindings, they will only reflect the changes in the property
 
+### Hide and Show Elements
+We can button that is visible only when a binding is true
+```html
+<button tiny-show='showButton'>Continue</button>
+```
+This value can be controlled from a checkbox property:
+```html
+<input type='checkbox' tiny-checked='showButton'> Show the button!
+```
+
+
 ### Subscribe to Changes
 ```js
 /* subscribe a function to changes in the lastName */
@@ -39,6 +50,7 @@ tiny.bindings.lastName.subscribe(function(newValue) {
   console.log('The last name was changed to: ' + newValue);
 });
 ```
+
 ### Create Bindings from Javscript
 ```html
 <div id='spanGroup'>
