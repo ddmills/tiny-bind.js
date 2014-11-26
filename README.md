@@ -5,7 +5,8 @@ Simple two-way data binding for javascript.
 There are a few basic bindings types:
 * value: Bind the "value" attribute
 * checked: Bind the "checked" attribute
-* show<sup>†</sup>: Bind the "display" css property
+* show<sup>†</sup>: Bind the "display" css property (uses 'block')
+* showInline<sup>†</sup>: Bind the "display" css property (uses 'inline-block')
 * html<sup>†</sup>: Bind the inner HTML
 
 <sup>†</sup>*These are not two-way bindings, they will only reflect the changes in the property*
