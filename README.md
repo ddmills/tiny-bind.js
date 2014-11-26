@@ -8,7 +8,7 @@ There are a few basic bindings types:
 * show<sup>†</sup>: Bind the "display" css property
 * html<sup>†</sup>: Bind the inner HTML
 
-*<sup>†</sup>These are not two-way bindings, they will only reflect the changes in the property*
+<sup>†</sup>*These are not two-way bindings, they will only reflect the changes in the property*
 
 ### Simple Example
 Create two bindings called "firstName" and "lastName" and bind them to the input and span elements.
