@@ -6,6 +6,7 @@
     this.node.addEventListener('input', function() {
       self.binding.set(self.node.value);
     });
+    this.notify(binding.get());
   }
 
   tc.prototype.notify = function(val) {
@@ -17,6 +18,7 @@
   }
 
   function tb(name) {
+    this.val = '';
     this.name = name;
     this.contributors = [];
     this.subscribers = [];
@@ -29,6 +31,10 @@
 
   tb.prototype.get = function() {
     return this.val;
+  }
+
+  tb.prototype.trigger = function() {
+    this.notify(this.val);
   }
 
   tb.prototype.notify = function(val) {
@@ -62,15 +68,20 @@
         }
         self.bindings[name].attach(e);
       });
+      if (value) { self.bindings[name].set(value); }
       return self.bindings[name];
+    },
+    'init'    : function() {
+      _fetch('[tiny-bind]').forEach(function(element) {
+        var name = element.getAttribute('tiny-bind');
+        if (!(name in tiny.bindings)) {
+          tiny.bindings[name] = new tb(name);
+        }
+        if (element.value) {
+          tiny.bindings[name].set(element.value);
+        }
+        tiny.bindings[name].attach(element);
+      });
     }
   }
-  _fetch('[tiny-bind]').forEach(function(element) {
-    var name = element.getAttribute('tiny-bind');
-    if (!(name in tiny.bindings)) {
-      tiny.bindings[name] = new tb(name);
-    }
-    tiny.bindings[name].attach(element);
-  });
-
 })(this);

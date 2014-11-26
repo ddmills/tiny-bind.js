@@ -5,40 +5,48 @@
   <meta name='description' content='data binding test for tiny-bind.js' http-equiv='X-UA-Compatible'>
   <meta content='width=device-width, initial-scale=1' name='viewport'>
   <title> Tiny-Bind Data Binding Test </title>
+  <script src='../tiny-bind.min.js'></script>
 </head>
 <body>
-  <p tiny-bind='hello'></p>
-  <input id='help' type='text' tiny-bind='hello'><br/>
-  <textarea tiny-bind='hello'></textarea>
+  <p>
+    <span tiny-bind='firstName'></span>
+    <span tiny-bind='lastName'></span>
+  </p>
+  <input type='text' tiny-bind='firstName' value='John'>
+  <input type='text' tiny-bind='lastName' value='Smith'>
 
-  <p tiny-bind='abe'></p>
-  <p tiny-bind='abe'></p>
-
-  <input type='text' tiny-bind='abe'><br />
-
-
-  <input type='text' tiny-bind='paras'>
-  <div id='paraGroup'>
-    <p></p>
-    <p></p>
-    <p></p>
-    <p></p>
-    <p></p>
-    <p></p>
+  <div id='spanGroup'>
+    <span></span>
+    <span></span>
+    <span></span>
   </div>
+  <input id='spanInput' type='text'>
 
-  <script src='../tiny-bind.min.js'></script>
   <script>
-
-    tiny.bindings.abe.subscribe(function(val) {
-      tiny.bindings.hello.set(val);
+    /* initialize tiny */
+    tiny.init();
+    /* this will return all bindings: firstName and lastName */
+    console.log(tiny.bindings);
+    /* we can get the value of a binding */
+    console.log(tiny.bindings.firstName.get());
+    /* set the value of a binding */
+    tiny.bindings.lastName.set('Depski');
+    /* subscribe to the lastName binding */
+    tiny.bindings.lastName.subscribe(function(newValue) {
+      console.log('The last name was changed to: ' + newValue);
     });
 
-    /* bind all paragraph elements inside #paraGroup
-     * to a binding called "paras" */
-    var paras = tiny.bind('#paraGroup p', 'paras');
-    /* set the value of all paragraphs to this text */
-    paras.set('all set to go!');
+    /* create a binding called "devilsNumber"
+     * apply it to all three span elements
+     * give it a starting value of 666 (optional)! */
+    tiny.bind('#spanGroup span', 'devilsNumber', 666);
+
+    /* We can also bind the text input to the
+     * binding called "devilsNumber" as well */
+    tiny.bind('#spanInput', 'devilsNumber');
+
+    /* this will notify all subscribers and contributors */
+    tiny.bindings.devilsNumber.trigger();
   </script>
 </body>
 </html>
