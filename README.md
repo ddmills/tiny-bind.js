@@ -5,9 +5,9 @@ Two-way data binding for javascript.
 ### Simple Example
 Create two variables called "firstName" and "lastName" and bind them to the input and span elements.
 ```html
-/* bind the inner HTML of the span elements */
+<!-- bind the inner HTML of the span elements -->
 <p><span tiny-html='firstName'></span> <span tiny-html='lastName'></span></p>
-/* bind the value attribute of the inputs */
+<!-- bind the value attribute of the inputs -->
 <input type='text' tiny-value='firstName' value='John'>
 <input type='text' tiny-value='lastName' value='Smith'>
 ```
