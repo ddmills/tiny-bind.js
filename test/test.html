@@ -17,8 +17,8 @@
   <input type='text' tiny-bind='abe'><br />
 
 
-  <input type='text' tiny-bind='later'>
-  <div id='bind-later'>
+  <input type='text' tiny-bind='paras'>
+  <div id='paraGroup'>
     <p></p>
     <p></p>
     <p></p>
@@ -33,7 +33,11 @@
     tiny.bindings.abe.subscribe(function(val) {
       tiny.bindings.hello.set(val);
     });
-    tiny.bind('#bind-later p', 'later');
+    /* bind all paragraph elements inside #paraGroup
+     * to a binding called "paras" */
+    var paras = tiny.bind('#paraGroup p', 'paras');
+    /* set the value of all paragraphs to this text */
+    paras.set('all set to go!');
   </script>
 </body>
 </html>

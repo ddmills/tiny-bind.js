@@ -60,6 +60,7 @@
         }
         t.bindings[name].a(e);
       });
+      return t.bindings[name];
     }
   }
   var e = [].slice.call(document.querySelectorAll('[tiny-bind]'));
