@@ -1,9 +1,55 @@
 tiny-bind.js
 ============
+Two-way data binding for javascript.
 
-lightweight two-way data binding for javascript
-
-tiny-bind.min.js:
+### Simple Example
+We can create two variables called "firstName" and "lastName" and bind them to the input and span elements.
+```html
+<p><span tiny-bind='firstName'></span> <span tiny-bind='lastName'></span></p>
+<input type='text' tiny-bind='firstName' value='John'>
+<input type='text' tiny-bind='lastName' value='Smith'>
+```
+We have access to a few methods and properties
 ```js
-!function(n){function t(n,t){this.binding=n,this.node=t;var i=this;this.node.addEventListener("input",function(){i.binding.set(i.node.value)})}function i(n){this.name=n,this.contributors=[],this.subscribers=[]}function o(n){return[].slice.call(document.querySelectorAll(n))}t.prototype.notify=function(n){"INPUT"==this.node.nodeName||"TEXTAREA"==this.node.nodeName?this.node.value=n:this.node.innerHTML=n},i.prototype.set=function(n){this.val=n,this.notify(this.val)},i.prototype.get=function(){return this.val},i.prototype.notify=function(n){this.contributors.forEach(function(t){t.notify(n)}),this.subscribers.forEach(function(t){t(n)})},i.prototype.subscribe=function(n){this.subscribers.push(n)},i.prototype.attach=function(n){this.contributors.push(new t(this,n))},n.tiny={bindings:{},bind:function(n,t){var s=this;return o(n).forEach(function(n){t in s.bindings||(s.bindings[t]=new i(t)),s.bindings[t].attach(n)}),s.bindings[t]}},o("[tiny-bind]").forEach(function(n){var t=n.getAttribute("tiny-bind");t in tiny.bindings||(tiny.bindings[t]=new i(t)),tiny.bindings[t].attach(n)})}(this);
+/* initialize tiny */
+tiny.init();
+/* this will return all bindings: firstName and lastName */
+console.log(tiny.bindings);
+/* we can get the value of a binding */
+console.log(tiny.bindings.firstName.get());
+/* set the value of a binding */
+tiny.bindings.lastName.set('Mills');
+```
+
+### Subscribe to Changes
+```js
+/* subscribe a function to changes in the lastName */
+tiny.bindings.lastName.subscribe(function(newValue) {
+  console.log('The last name was changed to: ' + newValue);
+});
+```
+### Create Bindings from Javscript
+```html
+<div id='spanGroup'>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
+<input id='spanInput' type='text'>
+```
+```js
+/* create a binding called "devilsNumber"
+ * apply it to all three span elements
+ * give it a starting value of 666 (optional)! */
+tiny.bind('#spanGroup span', 'devilsNumber', 666);
+
+/* We can also bind the text input to the
+ * binding called "devilsNumber" as well */
+tiny.bind('#spanInput', 'devilsNumber');
+```
+
+### Fire Change Event Manually
+```js
+/* this will notify all subscribers and contributors */
+tiny.bindings.devilsNumber.trigger();
 ```
