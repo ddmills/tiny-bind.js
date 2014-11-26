@@ -3,13 +3,15 @@ tiny-bind.js
 Two-way data binding for javascript.
 
 ### Simple Example
-We can create two variables called "firstName" and "lastName" and bind them to the input and span elements.
+Create two variables called "firstName" and "lastName" and bind them to the input and span elements.
 ```html
-<p><span tiny-bind='firstName'></span> <span tiny-bind='lastName'></span></p>
-<input type='text' tiny-bind='firstName' value='John'>
-<input type='text' tiny-bind='lastName' value='Smith'>
+/* bind the inner HTML of the span elements */
+<p><span tiny-html='firstName'></span> <span tiny-html='lastName'></span></p>
+/* bind the value attribute of the inputs */
+<input type='text' tiny-value='firstName' value='John'>
+<input type='text' tiny-value='lastName' value='Smith'>
 ```
-We have access to a few methods and properties
+Access to a few methods and properties
 ```js
 /* initialize tiny */
 tiny.init();
@@ -18,8 +20,17 @@ console.log(tiny.bindings);
 /* we can get the value of a binding */
 console.log(tiny.bindings.firstName.get());
 /* set the value of a binding */
-tiny.bindings.lastName.set('Depski');
+tiny.bindings.firstName.set('Depski');
 ```
+
+### Binding Types
+There are a few basic bindings types:
+* value: Bind the "value" attribute
+* checked: Bind the "checked" attribute
+* show*: Bind the "display" css property
+* html*: Bind the inner HTML
+
+*These are not two-way bindings, they will only reflect the changes in the property
 
 ### Subscribe to Changes
 ```js
