@@ -18,7 +18,7 @@ console.log(tiny.bindings);
 /* we can get the value of a binding */
 console.log(tiny.bindings.firstName.get());
 /* set the value of a binding */
-tiny.bindings.lastName.set('Mills');
+tiny.bindings.lastName.set('Depski');
 ```
 
 ### Subscribe to Changes
@@ -40,8 +40,9 @@ tiny.bindings.lastName.subscribe(function(newValue) {
 ```js
 /* create a binding called "devilsNumber"
  * apply it to all three span elements
- * give it a starting value of 666 (optional)! */
-tiny.bind('#spanGroup span', 'devilsNumber', 666);
+ * give it a starting value of 6 (optional)
+ * this put a 6 in all three span elements */
+tiny.bind('#spanGroup span', 'devilsNumber', 6);
 
 /* We can also bind the text input to the
  * binding called "devilsNumber" as well */
