@@ -1,6 +1,14 @@
 tiny-bind.js
 ============
-Two-way data binding for javascript.
+Simple two-way data binding for javascript.
+### Binding Types
+There are a few basic bindings types:
+* value: Bind the "value" attribute
+* checked: Bind the "checked" attribute
+* show*: Bind the "display" css property
+* html*: Bind the inner HTML
+
+*These are not two-way bindings, they will only reflect the changes in the property
 
 ### Simple Example
 Create two bindings called "firstName" and "lastName" and bind them to the input and span elements.
@@ -22,15 +30,6 @@ console.log(tiny.bindings.firstName.get());
 /* set the value of a binding */
 tiny.bindings.firstName.set('Depski');
 ```
-
-### Binding Types
-There are a few basic bindings types:
-* value: Bind the "value" attribute
-* checked: Bind the "checked" attribute
-* show*: Bind the "display" css property
-* html*: Bind the inner HTML
-
-*These are not two-way bindings, they will only reflect the changes in the property
 
 ### Hide and Show Elements
 We can button that is visible only when a binding is true
