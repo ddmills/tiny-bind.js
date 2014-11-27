@@ -15,9 +15,10 @@
     <span tiny-html='lastName'></span>
   </p>
 
-  <input type='checkbox' tiny-checked='freedom'>
-  <input type='checkbox' tiny-checked='freedom'>
-  <button type='button' tiny-show='freedom'>hello?</button>
+  <label>
+    <input type='checkbox' tiny-checked='showButton'> Show the button!
+  </label>
+  <button type='button' tiny-show='showButton'>hello?</button>
 
   <div id='spanGroup'>
     <span></span>
@@ -25,24 +26,14 @@
     <span></span>
   </div>
   <input id='spanInput' type='text'>
-  <script>
-    /* initialize tiny */
-    tiny.init();
-    /* this will return all bindings: firstName and lastName */
-    console.log(tiny.bindings);
-    /* we can get the value of a binding */
-    console.log(tiny.bindings.firstName.get());
-    /* set the value of a binding */
-    tiny.bindings.lastName.set('Depski');
-    /* subscribe to the lastName binding */
-    tiny.bindings.lastName.subscribe(function(newValue) {
-      if (newValue.length > 5) {
-        tiny.bindings.freedom.set(true);
-      } else {
-        tiny.bindings.freedom.set(false);
-      }
-    });
+  <ul tiny-for='contacts'>
+    <li>test</li>
+  </ul>
 
+  <script>
+    tiny.init();
+    console.log(tiny.bindings);
+    tiny.bindings.lastName.set('Depski');
     /* create a binding called "devilsNumber"
      * apply it to all three span elements
      * give it a starting value of 666 (optional)! */
@@ -51,9 +42,9 @@
     /* We can also bind the text input to the
      * binding called "devilsNumber" as well */
     tiny.value('#spanInput', 'devilsNumber');
-
-
-
+    // tiny.array('contacts', [1, 2, 3]);
+    tiny.bindings.contacts.set([1, 2, 3]);
+    // tiny.bindings.contacts.set([1]);
     /* this will notify all subscribers and contributors */
     // tiny.bindings.devilsNumber.trigger();
   </script>
