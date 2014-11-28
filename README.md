@@ -50,6 +50,70 @@ This value can be controlled from a checkbox property:
 <input type='checkbox' tiny-checked='showButton'> Show the button!
 ```
 
+### For Loops
+```html
+<div tiny-for='contacts'>
+  <p>
+    <span tiny-html='$index'></span>.)
+    <span tiny-html='$value.name.first'></span>
+    <span tiny-html='$value.name.last'></span>
+    is
+    <span tiny-html='$value.age'></span> years old.
+  </p>
+  <p>
+    Here is some JSON:
+    <span tiny-html='$value.name'></span>
+  </p>
+  <p>
+    Get access to the root variable:
+    <span tiny-html='$root.sweg'></span>
+  </p>
+</div>
+```
+```js
+tiny.set('contacts', [{
+  'name': {
+    'first': 'Abe',
+    'last': 'Lincoln'
+  },
+  'age': 6
+},{
+  'name': {
+    'first': 'George',
+    'last': 'Bush'
+  },
+  'age': 59
+},{
+  'name': {
+    'first': 'Aaron',
+    'last': 'Rodgers'
+  },
+  'age': 32
+}]);
+tiny.set('sweg', 'so much');
+```
+This will output:
+
+
+0.) Abe Lincoln is 6 years old.
+
+Here is some JSON: {"first":"Abe","last":"Lincoln"}
+
+Get access to the root variable: so much
+
+1.) George Bush is 59 years old.
+
+Here is some JSON: {"first":"George","last":"Bush"}
+
+Get access to the root variable: so much
+
+2.) Aaron Rodgers is 32 years old.
+
+Here is some JSON: {"first":"Aaron","last":"Rodgers"}
+
+Get access to the root variable: so much
+
+
 
 ### Subscribe to Changes
 ```js
