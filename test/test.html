@@ -11,7 +11,7 @@
   <input type='text' tiny-value='contacts.name.first'>
   <input type='text' tiny-value='contacts.name.last'>
   <p>
-    <span tiny-html='contacts.name.first'></span>
+    <span tiny-html='contacts.name'></span>
     <span tiny-html='contacts.name.last'></span>
   </p>
 
@@ -26,8 +26,8 @@
       'other': [12, 4, 16]
     });
 
-    console.log(tiny.get('contacts').value());
-    console.log(tiny.get('contacts').get('name').value());
+    console.log(tiny.root);
+    console.log(tiny.get('contacts.name').value());
   </script>
 </body>
 </html>

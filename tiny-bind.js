@@ -1,7 +1,11 @@
 (function(root) {
   var handlers = {
     'html': function(val) {
-      this.node.innerHTML = val;
+      if (typeof(val) == 'object') {
+        this.node.innerHTML = JSON.stringify(val);
+      } else {
+        this.node.innerHTML = val;
+      }
     },
     'value': function(val) {
       this.node.value = val;
@@ -49,7 +53,7 @@
     'show': function() {
       return this.node.display == 'block';
     },
-    'show': function() {
+    'showInline': function() {
       return this.node.display == 'inline-block';
     },
     'checked': function() {
@@ -124,11 +128,23 @@
       if (val != this.val) {
         this.val = val;
         this.notify(this.val);
+        if (this.context) {
+          if (this.context.name != '$root') {
+            this.context.trigger();
+          }
+        }
       }
     }
   }
 
   tb.prototype.value = function() {
+    if (typeof(this.val) == 'object') {
+      var res = {};
+      for (key in this.bindings) {
+        res[key] = this.bindings[key].value();
+      }
+      this.val = res;
+    }
     return this.val;
   }
 
@@ -137,7 +153,9 @@
   }
 
   tb.prototype.trigger = function() {
-    this.notify(this.val);
+    if (this.contributors.length > 0 || this.subscribers.length > 0) {
+      this.notify(this.value());
+    }
   }
 
   tb.prototype.notify = function(val) {
