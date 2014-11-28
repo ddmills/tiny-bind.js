@@ -8,45 +8,23 @@
   <script src='../tiny-bind.js'></script>
 </head>
 <body>
-  <input type='text' tiny-value='firstName' value='John'>
-  <input type='text' tiny-value='lastName' value='Smith'>
+  <input type='text' tiny-value='contacts.name.first'>
+  <input type='text' tiny-value='contacts.name.last'>
   <p>
-    <span tiny-html='firstName'></span>
-    <span tiny-html='lastName'></span>
+    <span tiny-html='contacts.name.first'></span>
+    <span tiny-html='contacts.name.last'></span>
   </p>
-
-  <label>
-    <input type='checkbox' tiny-checked='showButton'> Show the button!
-  </label>
-  <button type='button' tiny-show='showButton'>hello?</button>
-
-  <div id='spanGroup'>
-    <span></span>
-    <span></span>
-    <span></span>
-  </div>
-  <input id='spanInput' type='text'>
-  <ul tiny-for='contacts'>
-    <li>test</li>
-  </ul>
 
   <script>
     tiny.init();
-    console.log(tiny.bindings);
-    tiny.bindings.lastName.set('Depski');
-    /* create a binding called "devilsNumber"
-     * apply it to all three span elements
-     * give it a starting value of 666 (optional)! */
-    tiny.html('#spanGroup span', 'devilsNumber', 6);
-
-    /* We can also bind the text input to the
-     * binding called "devilsNumber" as well */
-    tiny.value('#spanInput', 'devilsNumber');
-    // tiny.array('contacts', [1, 2, 3]);
-    tiny.bindings.contacts.set([1, 2, 3]);
-    // tiny.bindings.contacts.set([1]);
-    /* this will notify all subscribers and contributors */
-    // tiny.bindings.devilsNumber.trigger();
+    tiny.set('contacts', {
+      'name': {
+        'first': 'Abe',
+        'last': 'Lincoln'
+      },
+      'age': 58,
+      'other': [12, 4, 16]
+    });
   </script>
 </body>
 </html>

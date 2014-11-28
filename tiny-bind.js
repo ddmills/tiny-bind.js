@@ -18,11 +18,24 @@
     'for': function(val) {
       this.node.innerHTML = '';
       var s = this;
-      if(Array.isArray(val)) {
-        val.forEach(function(v) {
-          s.node.innerHTML += '<li>hello</li>';
-        });
-      }
+      // if(Array.isArray(val)) {
+      //   val.forEach(function(v) {
+      //     s.node.innerHTML += s.template;
+      //     contribTypes.forEach(function(type) {
+      //       var all = [].slice.call(s.node.querySelectorAll('[' + tiny.prefix + type + ']'));
+      //       all.forEach(function(element) {
+      //         var key = element.getAttribute(tiny.prefix+type);
+      //         console.log(v[key]);
+      //         console.log(key);
+      //         console.log(v);
+      //         handlers[type].call(s, v[key]);
+      //         // tiny.bindings[name].attach(type, element);
+      //       });
+      //     });
+      //   });
+        // var children = this.node.getElementsByTagName('*');
+
+      // }
     }
   }
 
@@ -59,11 +72,14 @@
       });
     },
     'for': function(tc) {
+      tc.template = tc.node.innerHTML;
       tc.node.innerHTML = '';
     }
   }
 
   var contribTypes = ['html', 'value', 'show', 'showInline', 'checked'];
+  var ctxTypes = ['ctx', 'for'];
+
   /* Contributor */
   function tc(binding, type, node) {
     this.binding     = binding;
@@ -78,16 +94,37 @@
   function tb(name, ctx) {
     this.val          = '';
     this.name         = name;
-    this.context      = ctx;
+    if (ctx) { ctx.bind(this); }
+    this.bindings     = {};
     this.contributors = [];
     this.subscribers  = [];
   }
 
+  tb.prototype.bind = function(binding) {
+    binding.setContext(this);
+    this.bindings[binding.name] = binding;
+  }
+
+  tb.prototype.setContext = function(binding) {
+    this.context = binding;
+  }
+
   /* Binding */
   tb.prototype.set = function(val) {
-    if (val != this.val) {
+    if (typeof(val) == 'object') {
       this.val = val;
-      this.notify(this.val);
+      var b;
+      for(key in val) {
+        if (!(key in this.bindings)) {
+          this.bindings[key] = new tb(key, this);
+        }
+        this.bindings[key].set(val[key]);
+      }
+    } else {
+      if (val != this.val) {
+        this.val = val;
+        this.notify(this.val);
+      }
     }
   }
 
@@ -131,36 +168,74 @@
     scope.unshift('tinyRoot');
   }
 
+  function attrSel(type) {
+    return '[' + tiny.prefix + type + ']';
+  }
   function _fetch(selector) {
     return [].slice.call(document.querySelectorAll(selector));
+  }
+  function parseAttr(val, root, index) {
+    var names = val.split('.');
+    var binding = root ? root : tiny.root;
+    names.forEach(function(name) {
+      if (name == '$root') {
+        binding = tiny.root;
+      } else if (name == '$index') {
+        binding = binding.bindings[index];
+      } else {
+        if (!(name in binding.bindings)) {
+          binding.bindings[name] = new tb(name, binding);
+        }
+        binding = binding.bindings[name];
+      }
+    });
+    return binding;
   }
 
   root.tiny = {
     'prefix': 'tiny-',
+    'root' : new tb('$root', null),
     'bindings': {},
     'init': function(prefix) {
-      tiny.prefix = prefix ? tiny.prefix : 'tiny-';
-      _fetch('[' + tiny.prefix + 'for]').forEach(function(e) {
-        var name = e.getAttribute(tiny.prefix+'for');
-        tiny.bindings[name] = new tb(name);
-        tiny.bindings[name].attach('for', e);
-      });
+      tiny.prefix = prefix ? prefix : 'tiny-';
       contribTypes.forEach(function(type) {
-        var attr = '[' + tiny.prefix + type + ']';
-        _fetch(attr).forEach(function(element) {
-          var name = element.getAttribute(tiny.prefix+type);
-          if (!(name in tiny.bindings)) {
-            tiny.bindings[name] = new tb(name);
-          }
-          tiny.bindings[name].attach(type, element);
+        _fetch(attrSel(type)).forEach(function(element) {
+          var attrString = element.getAttribute(tiny.prefix + type);
+          var binding = parseAttr(attrString);
+          binding.attach(type, element);
         });
       });
+
+      // tiny.prefix = prefix ? tiny.prefix : 'tiny-';
+      // _fetch('[' + tiny.prefix + 'for]').forEach(function(e) {
+      //   var name = e.getAttribute(tiny.prefix+'for');
+      //   tiny.bindings[name] = new tb(name);
+      //   tiny.bindings[name].attach('for', e);
+      // });
+      // contribTypes.forEach(function(type) {
+      //   var attr = '[' + tiny.prefix + type + ']';
+      //   _fetch(attr).forEach(function(element) {
+      //     var name = element.getAttribute(tiny.prefix+type);
+      //     if (!(name in tiny.bindings)) {
+      //       tiny.bindings[name] = new tb(name);
+      //     }
+      //     tiny.bindings[name].attach(type, element);
+      //   });
+      // });
     },
-    'bind': function(type, selector, name, value) {
+    'new': function(name) { return new tb(name, tiny.root); },
+    'set': function(name, value) {
+      var binding = parseAttr(name);
+      binding.set(value);
+    },
+    'get': function(attrString) {
+      return parseAttr(attrString);
+    },
+    'old': function(type, selector, name, value) {
       var self = this;
       _fetch(selector).forEach(function(e) {
         if (!(name in self.bindings)) {
-          self.bindings[name] = new tb(name, self.bindings);
+          self.bindings[name] = new tb(name);
         }
         self.bindings[name].attach(type, e);
         if (value) { self.bindings[name].set(value); }
