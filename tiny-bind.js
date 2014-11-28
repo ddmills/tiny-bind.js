@@ -27,23 +27,49 @@
       this.node.innerHTML = '';
       var s = this;
       var len = 0;
+      var keys = [];
+      // console.log('----');
       for (key in val) {
-        console.log('k: ' + key + ' len: ' + len);
         if (val.hasOwnProperty(key)) {
           s.node.innerHTML += s.template;
-          for (var i = len; i < len + s.templateSize; i++) {
-            var children = s.node.getElementsByTagName('*');
-            contribTypes.forEach(function(type) {
-              if (children[i].hasAttribute(tiny.prefix + type)) {
-                var attrString = children[i].getAttribute(tiny.prefix + type);
-                var bind = parseAttr(attrString, s.binding, key);
-                bind.attach(type, attrString, children[i]);
-              }
-            });
-          }
-          len += s.templateSize;
+          // len++;
+          keys.push(key);
         }
       }
+      var children = s.node.getElementsByTagName('*');
+      for (var i = 0; i < keys.length; i++) {
+        for (var j = 0; j < s.templateSize; j++) {
+          var child = children[i * s.templateSize + j];
+          contribTypes.forEach(function(type) {
+            if (child.hasAttribute(tiny.prefix + type)) {
+              var attrString = child.getAttribute(tiny.prefix + type);
+              // console.log(attrString);
+              var bind = parseAttr(attrString, s.binding, i);
+              // console.log(bind);
+              bind.attach(type, attrString, child);
+            }
+          });
+        }
+
+      }
+        // console.log(val);
+        // if (val.hasOwnProperty(key)) {
+        //
+        //   for (var i = len; i < len + s.templateSize; i++) {
+        //     var children = s.node.getElementsByTagName('*');
+        //     contribTypes.forEach(function(type) {
+        //       if (children[i].hasAttribute(tiny.prefix + type)) {
+        //         var attrString = children[i].getAttribute(tiny.prefix + type);
+        //         var bind = parseAttr(attrString, s.binding, key);
+        //         if (bind) {
+        //           bind.attach(type, attrString, children[i]);
+        //         }
+        //       }
+        //     });
+        //   }
+        //   len += s.templateSize;
+        // }
+      // }
     }
   }
 
@@ -81,14 +107,12 @@
     },
     'for': function(tc) {
       tc.templateSize = tc.node.getElementsByTagName('*').length;
-      console.log('template size: ' + tc.templateSize);
       tc.template = tc.node.innerHTML;
       tc.node.innerHTML = '';
     }
   }
 
   var contribTypes = ['for', 'html', 'value', 'show', 'showInline', 'checked'];
-  var ctxTypes = ['ctx', 'for'];
 
   /* Contributor */
   function tc(binding, type, node, attrString) {
@@ -244,21 +268,6 @@
     },
     'get': function(attrString) {
       return parseAttr(attrString);
-    },
-    'show': function(selector, name, value) {
-      this.bind('show', selector, name, value);
-    },
-    'showInline': function(selector, name, value) {
-      this.bind('showInline', selector, name, value);
-    },
-    'html': function(selector, name, value) {
-      this.bind('html', selector, name, value);
-    },
-    'value': function(selector, name, value) {
-      this.bind('value', selector, name, value);
-    },
-    'checked': function(selector, name, value) {
-      this.bind('checked', selector, name, value);
-    },
+    }
   }
 })(this);

@@ -8,32 +8,42 @@
   <script src='../tiny-bind.js'></script>
 </head>
 <body>
-  <input type='text' tiny-value='contacts.name.first'>
-  <input type='text' tiny-value='contacts.other.0'>
-  <p>
-    <pre tiny-html='$root.contacts'></pre>
-    <span tiny-html='contacts.name.last'></span>
-  </p>
-  <div tiny-for='contacts.other'>
+  <div tiny-for='contacts'>
     <p>
       <span tiny-html='$index'>a</span>
-      <span tiny-html='$value'>a</span>
+      <span tiny-html='$value.name.first'>b</span>
+      <span tiny-html='$value.name.last'>b</span>
+      <span tiny-html='$value.name'>b</span>
+      <span tiny-html='$root.sweg'>b</span>
     </p>
   </div>
 
+  <input type='text' tiny-value='sweg'>
+
   <script>
     tiny.init();
-    tiny.set('contacts', {
+    tiny.set('contacts', [{
       'name': {
         'first': 'Abe',
         'last': 'Lincoln'
       },
-      'age': 58,
-      'other': [12, 4, 16]
-    });
-
+      'age': 58
+    },{
+      'name': {
+        'first': 't',
+        'last': 'fdas'
+      },
+      'age': 12
+    },{
+      'name': {
+        'first': 'asdf',
+        'last': 'fdsa'
+      },
+      'age': 43
+    }]);
+    tiny.set('sweg', 'yolo');
     console.log(tiny.root);
-    console.log(tiny.get('contacts.name').value());
+    console.log(tiny.get('contacts.0.name'));
   </script>
 </body>
 </html>
