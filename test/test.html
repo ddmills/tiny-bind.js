@@ -9,11 +9,17 @@
 </head>
 <body>
   <input type='text' tiny-value='contacts.name.first'>
-  <input type='text' tiny-value='contacts.name.last'>
+  <input type='text' tiny-value='contacts.other.0'>
   <p>
-    <span tiny-html='contacts.name'></span>
+    <pre tiny-html='$root.contacts'></pre>
     <span tiny-html='contacts.name.last'></span>
   </p>
+  <div tiny-for='contacts.other'>
+    <p>
+      <span tiny-html='$index'>a</span>
+      <span tiny-html='$value'>a</span>
+    </p>
+  </div>
 
   <script>
     tiny.init();

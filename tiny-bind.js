@@ -1,10 +1,14 @@
 (function(root) {
   var handlers = {
     'html': function(val) {
-      if (typeof(val) == 'object') {
-        this.node.innerHTML = JSON.stringify(val);
+      if (this.attrString == '$index' || this.attrString == '$key') {
+        this.node.innerHTML = this.binding.name;
       } else {
-        this.node.innerHTML = val;
+        if (typeof(val) == 'object') {
+          this.node.innerHTML = JSON.stringify(val);
+        } else {
+          this.node.innerHTML = val;
+        }
       }
     },
     'value': function(val) {
@@ -22,24 +26,24 @@
     'for': function(val) {
       this.node.innerHTML = '';
       var s = this;
-      // if(Array.isArray(val)) {
-      //   val.forEach(function(v) {
-      //     s.node.innerHTML += s.template;
-      //     contribTypes.forEach(function(type) {
-      //       var all = [].slice.call(s.node.querySelectorAll('[' + tiny.prefix + type + ']'));
-      //       all.forEach(function(element) {
-      //         var key = element.getAttribute(tiny.prefix+type);
-      //         console.log(v[key]);
-      //         console.log(key);
-      //         console.log(v);
-      //         handlers[type].call(s, v[key]);
-      //         // tiny.bindings[name].attach(type, element);
-      //       });
-      //     });
-      //   });
-        // var children = this.node.getElementsByTagName('*');
-
-      // }
+      var len = 0;
+      for (key in val) {
+        console.log('k: ' + key + ' len: ' + len);
+        if (val.hasOwnProperty(key)) {
+          s.node.innerHTML += s.template;
+          for (var i = len; i < len + s.templateSize; i++) {
+            var children = s.node.getElementsByTagName('*');
+            contribTypes.forEach(function(type) {
+              if (children[i].hasAttribute(tiny.prefix + type)) {
+                var attrString = children[i].getAttribute(tiny.prefix + type);
+                var bind = parseAttr(attrString, s.binding, key);
+                bind.attach(type, attrString, children[i]);
+              }
+            });
+          }
+          len += s.templateSize;
+        }
+      }
     }
   }
 
@@ -76,18 +80,21 @@
       });
     },
     'for': function(tc) {
+      tc.templateSize = tc.node.getElementsByTagName('*').length;
+      console.log('template size: ' + tc.templateSize);
       tc.template = tc.node.innerHTML;
       tc.node.innerHTML = '';
     }
   }
 
-  var contribTypes = ['html', 'value', 'show', 'showInline', 'checked'];
+  var contribTypes = ['for', 'html', 'value', 'show', 'showInline', 'checked'];
   var ctxTypes = ['ctx', 'for'];
 
   /* Contributor */
-  function tc(binding, type, node) {
+  function tc(binding, type, node, attrString) {
     this.binding     = binding;
     this.node        = node;
+    this.attrString  = attrString;
     this.type        = type;
     this.getVal      = getVal[type];
     this.handle      = handlers[type];
@@ -115,6 +122,7 @@
 
   /* Binding */
   tb.prototype.set = function(val) {
+    /* todo: remove old keys (esp. for arrays) */
     if (typeof(val) == 'object') {
       this.val = val;
       var b;
@@ -129,16 +137,14 @@
         this.val = val;
         this.notify(this.val);
         if (this.context) {
-          if (this.context.name != '$root') {
-            this.context.trigger();
-          }
+          this.context.trigger();
         }
       }
     }
   }
 
   tb.prototype.value = function() {
-    if (typeof(this.val) == 'object') {
+    if (Object.keys(this.bindings).length > 0) {
       var res = {};
       for (key in this.bindings) {
         res[key] = this.bindings[key].value();
@@ -156,6 +162,9 @@
     if (this.contributors.length > 0 || this.subscribers.length > 0) {
       this.notify(this.value());
     }
+    if (this.context) {
+      this.context.trigger();
+    }
   }
 
   tb.prototype.notify = function(val) {
@@ -172,8 +181,8 @@
     this.subscribers.push(cb);
   }
 
-  tb.prototype.attach = function(type, element) {
-    var cont = new tc(this, type, element);
+  tb.prototype.attach = function(type, attrString, element) {
+    var cont = new tc(this, type, element, attrString);
     this.contributors.push(cont);
     return cont;
   }
@@ -202,7 +211,7 @@
     names.forEach(function(name) {
       if (name == '$root') {
         binding = tiny.root;
-      } else if (name == '$index') {
+      } else if (name == '$index' || name == '$key' || name == '$value') {
         binding = binding.bindings[index];
       } else {
         if (!(name in binding.bindings)) {
@@ -224,26 +233,9 @@
         _fetch(attrSel(type)).forEach(function(element) {
           var attrString = element.getAttribute(tiny.prefix + type);
           var binding = parseAttr(attrString);
-          binding.attach(type, element);
+          binding.attach(type, attrString, element);
         });
       });
-
-      // tiny.prefix = prefix ? tiny.prefix : 'tiny-';
-      // _fetch('[' + tiny.prefix + 'for]').forEach(function(e) {
-      //   var name = e.getAttribute(tiny.prefix+'for');
-      //   tiny.bindings[name] = new tb(name);
-      //   tiny.bindings[name].attach('for', e);
-      // });
-      // contribTypes.forEach(function(type) {
-      //   var attr = '[' + tiny.prefix + type + ']';
-      //   _fetch(attr).forEach(function(element) {
-      //     var name = element.getAttribute(tiny.prefix+type);
-      //     if (!(name in tiny.bindings)) {
-      //       tiny.bindings[name] = new tb(name);
-      //     }
-      //     tiny.bindings[name].attach(type, element);
-      //   });
-      // });
     },
     'new': function(name) { return new tb(name, tiny.root); },
     'set': function(name, value) {
@@ -252,20 +244,6 @@
     },
     'get': function(attrString) {
       return parseAttr(attrString);
-    },
-    'old': function(type, selector, name, value) {
-      var self = this;
-      _fetch(selector).forEach(function(e) {
-        if (!(name in self.bindings)) {
-          self.bindings[name] = new tb(name);
-        }
-        self.bindings[name].attach(type, e);
-        if (value) { self.bindings[name].set(value); }
-      });
-      return self.bindings[name];
-    },
-    'array': function(name, arr) {
-
     },
     'show': function(selector, name, value) {
       this.bind('show', selector, name, value);
