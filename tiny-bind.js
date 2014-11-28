@@ -88,7 +88,7 @@
     this.getVal      = getVal[type];
     this.handle      = handlers[type];
     listeners[type](this);
-    this.handle(binding.get());
+    this.handle(binding.value());
   }
 
   function tb(name, ctx) {
@@ -128,8 +128,12 @@
     }
   }
 
-  tb.prototype.get = function() {
+  tb.prototype.value = function() {
     return this.val;
+  }
+
+  tb.prototype.get = function(name) {
+    return this.bindings[name];
   }
 
   tb.prototype.trigger = function() {
