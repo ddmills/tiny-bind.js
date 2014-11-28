@@ -12,24 +12,32 @@ There are a few basic bindings types:
 <sup>†</sup>*These are not two-way bindings, they will only reflect the changes in the property*
 
 ### Simple Example
-Create two bindings called "firstName" and "lastName" and bind them to the input and span elements.
+Create some variables and bind them to the input and span elements.
 ```html
 <!-- bind the inner HTML of the span elements -->
-<p><span tiny-html='firstName'></span> <span tiny-html='lastName'></span></p>
+<p><span tiny-html='name.first'></span> <span tiny-html='name.last'></span></p>
 <!-- bind the value attribute of the inputs -->
-<input type='text' tiny-value='firstName' value='John'>
-<input type='text' tiny-value='lastName' value='Smith'>
+<input type='text' tiny-value='name.first' value='John'>
+<input type='text' tiny-value='name.last' value='Smith'>
 ```
 Access to a few methods and properties
 ```js
 /* initialize tiny */
 tiny.init();
-/* this will return all bindings: firstName and lastName */
-console.log(tiny.bindings);
-/* we can get the value of a binding */
-console.log(tiny.bindings.firstName.get());
-/* set the value of a binding */
-tiny.bindings.firstName.set('Depski');
+
+/* get a bind object */
+var nameBinding = tiny.get('name');
+
+/* we can get the value of a binding
+ * Returns
+ *  { 'first': 'John', 
+ *    'last' : 'Smith' } */
+nameBinding.value();
+
+/* set the value of name.last to "Depski" */
+nameBinding.get('last').set('Depski');
+/* another way to do it */
+tiny.set('name.last', 'Depski');
 ```
 
 ### Hide and Show Elements
