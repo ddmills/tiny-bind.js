@@ -9,14 +9,22 @@
 </head>
 <body>
   <div tiny-for='contacts'>
-    <p>
-      <span tiny-html='$index'>a</span>
-      <span tiny-html='$value.name.first'>b</span>
-      <span tiny-html='$value.name.last'>b</span>
-      <span tiny-html='$value.name'>b</span>
-      <span tiny-html='$root.sweg'>b</span>
-    </p>
-  </div>
+  <p>
+    <span tiny-html='$index'></span>.)
+    <span tiny-html='$value.name.first'></span>
+    <span tiny-html='$value.name.last'></span>
+    is
+    <span tiny-html='$value.age'></span> years old.
+  </p>
+  <p>
+    Here is some JSON:
+    <span tiny-html='$value.name'></span>
+  </p>
+  <p>
+    Get access to the root variable:
+    <span tiny-html='$root.sweg'></span>
+  </p>
+</div>
 
   <input type='text' tiny-value='sweg'>
 
@@ -27,19 +35,19 @@
         'first': 'Abe',
         'last': 'Lincoln'
       },
-      'age': 58
+      'age': 6
     },{
       'name': {
-        'first': 't',
-        'last': 'fdas'
+        'first': 'George',
+        'last': 'Bush'
       },
-      'age': 12
+      'age': 59
     },{
       'name': {
-        'first': 'asdf',
-        'last': 'fdsa'
+        'first': 'Aaron',
+        'last': 'Rodgers'
       },
-      'age': 43
+      'age': 32
     }]);
     tiny.set('sweg', 'yolo');
     console.log(tiny.root);
