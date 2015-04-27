@@ -1,4 +1,4 @@
-(function(root) {
+!(function(root) {
   var handlers = {
     'html': function(val) {
       if (this.attrString == '$index' || this.attrString == '$key') {
