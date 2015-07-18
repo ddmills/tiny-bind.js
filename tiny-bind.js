@@ -24,15 +24,18 @@
       this.node.checked = val;
     },
     'for': function(val) {
-      this.node.innerHTML = '';
       var s = this;
+      s.node.innerHTML = '';
+      s.innerContributors.forEach(function(cont) {
+        cont.remove();
+        delete cont;
+      });
+      s.innerContributors = [];
       var len = 0;
       var keys = [];
-      // console.log('----');
       for (key in val) {
         if (val.hasOwnProperty(key)) {
           s.node.innerHTML += s.template;
-          // len++;
           keys.push(key);
         }
       }
@@ -46,12 +49,13 @@
               // console.log(attrString);
               var bind = parseAttr(attrString, s.binding, i);
               // console.log(bind);
-              bind.attach(type, attrString, child);
+              var cont = bind.attach(type, attrString, child);
+              s.innerContributors.push(cont);
             }
           });
         }
-
       }
+      console.log(s.innerContributors);
         // console.log(val);
         // if (val.hasOwnProperty(key)) {
         //
@@ -109,6 +113,7 @@
       tc.templateSize = tc.node.getElementsByTagName('*').length;
       tc.template = tc.node.innerHTML;
       tc.node.innerHTML = '';
+      tc.innerContributors = [];
     }
   }
 
@@ -126,6 +131,10 @@
     this.handle(binding.value());
   }
 
+  tc.prototype.remove = function() {
+    this.binding.deleteContributor(this);
+  }
+
   function tb(name, ctx) {
     this.val          = '';
     this.name         = name;
@@ -138,6 +147,10 @@
   tb.prototype.bind = function(binding) {
     binding.setContext(this);
     this.bindings[binding.name] = binding;
+  }
+
+  tb.prototype.deleteContributor = function(contrib) {
+    console.log('deletee contrib ' + this.name);
   }
 
   tb.prototype.setContext = function(binding) {

@@ -8,6 +8,7 @@
   <script src='../tiny-bind.js'></script>
 </head>
 <body>
+
   <div tiny-for='contacts'>
   <p>
     <span tiny-html='$index'></span>.)
@@ -26,7 +27,7 @@
   </p>
 </div>
 
-  <input type='text' tiny-value='sweg'>
+  <input type='text' tiny-value='contacts.1.name.last'>
 
   <script>
     tiny.init();
